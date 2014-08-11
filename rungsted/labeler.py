@@ -13,7 +13,7 @@ from os.path import exists, join
 import time
 
 from decoding import Viterbi as ViterbiStd
-from decoding_pd import Viterbi as ViterbiPd
+#from decoding_pd import Viterbi as ViterbiPd
 from feat_map import HashingFeatMap, DictFeatMap
 
 from input import read_vw_seq, count_group_sizes, dropout_groups
@@ -160,7 +160,7 @@ def do_test(transition, emission):
 
 
     timers['test'].end()
-    logging.info("Accuracy: {:.3f}".format(accuracy(test)))
+    logging.info("Accuracy: {:.4f}".format(accuracy(test)))
     print >>sys.stderr, "Test took {:.2f} secs. {} words/sec".format(timers['test'].elapsed(),
                                                                          int(sum(len(seq) for seq in test) / timers['test'].elapsed()))
 
