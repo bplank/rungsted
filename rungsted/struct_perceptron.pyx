@@ -93,14 +93,14 @@ def update_weights(Sequence sent, Weights w, double alpha, int n_labels,
         if gold_label != pred_label:
             for feat in cur.features:
                 w.update_e(feat_map.feat_i_for_label(feat.index, gold_label),
-                           feat.value * alpha)
+                           feat.value * alpha * cur.importance)
                 w.update_e(feat_map.feat_i_for_label(feat.index, pred_label),
-                           -feat.value * alpha)
+                           -feat.value * alpha * cur.importance)
 
             # Transition from from initial state
             if word_i == 0:
-                w.update_t(n_labels, gold_label, alpha)
-                w.update_t(n_labels, pred_label, -alpha)
+                w.update_t(n_labels, gold_label, alpha * cur.importance)
+                w.update_t(n_labels, pred_label, -alpha * cur.importance)
 
     # Transition features
     for word_i in range(1, len(sent)):
@@ -108,8 +108,8 @@ def update_weights(Sequence sent, Weights w, double alpha, int n_labels,
         prev = sent.examples.at(word_i - 1)
         # If current or previous prediction is not correct
         if cur.gold_label != cur.pred_label or prev.gold_label != prev.pred_label:
-            w.update_t(cur.gold_label, prev.gold_label, alpha)
-            w.update_t(cur.pred_label, prev.pred_label, -alpha)
+            w.update_t(cur.gold_label, prev.gold_label, alpha * cur.importance)
+            w.update_t(cur.pred_label, prev.pred_label, -alpha * cur.importance)
 
 # @cython.cdivision(True)
 # def update_weights_cs(Sequence sent, Weights w, double alpha, int n_labels,
