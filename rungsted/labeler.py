@@ -130,7 +130,7 @@ if args.test:
 
 
     timers['test'].end()
-    logging.info("Accuracy: {:.3f}".format(accuracy(test)))
+    logging.info("Accuracy: {:.4f}".format(accuracy(test)))
     print >>sys.stderr, "Test took {:.2f} secs. {} words/sec".format(timers['test'].elapsed(),
                                                                          int(sum(len(seq) for seq in test) / timers['test'].elapsed()))
 
