@@ -47,7 +47,9 @@ parser.add_argument('--audit', help="Print the interpretation of the input files
                                     "Useful for debugging. ", action='store_true')
 parser.add_argument('--name', help="Identify this invocation by NAME (use in conjunction with --append-test).")
 parser.add_argument('--labels', help="Read the set of labels from this file.")
-parser.add_argument('--drop-out', help="Regularize by randomly removing features (with probability 0.1).", action='store_true')
+#parser.add_argument('--drop-out', help="Regularize by randomly removing features (with probability 0.1).", action='store_true')
+parser.add_argument('--drop-out', help="Regularize by randomly removing features (with probability 0.1). [adversarial|zipf|binomial]")
+#parser.add_argument('--drop-out-method', help="adversarial|zipf|binomial")
 parser.add_argument('--decoder', '-d', help="Use this decoder to find the best sequence given the constraints",
                     choices=('viterbi', 'viterbi_pd'), default='viterbi')
 
@@ -112,9 +114,20 @@ logging.info("Weight vector sizes. Transition={}. Emission={}".format(wt.dims, w
 if args.train and args.drop_out:
     # logging.info("Counting group sizes")
     # group_sizes = count_group_sizes(train)
-    # corrupter = FastBinomialCorruption(0.1, feat_map, n_labels)
-    # corrupter = RecycledDistributionCorruption(inverse_zipfian_sampler, feat_map, n_labels)
-    corrupter = AdversialCorruption(0.1, feat_map, n_labels)
+    if args.drop_out not in ["adversarial","zipf","binomial"]:
+        print "not a valid drop-out method"
+        exit()
+    else:
+        drop_out=True
+    if args.drop_out == "binomial":
+        corrupter = FastBinomialCorruption(0.1, feat_map, n_labels)
+    elif args.drop_out == "zipf":
+        corrupter = RecycledDistributionCorruption(inverse_zipfian_sampler, feat_map, n_labels)
+    elif args.drop_out=="adversarial":
+        corrupter = AdversialCorruption(0.1, feat_map, n_labels)
+    else:
+        print "unknown drop-out method"
+        exit()
 
 else:
     group_sizes = None
@@ -129,7 +142,7 @@ def do_train(transition, emission):
     n_updates = 0
     for epoch in range(1, args.passes+1):
         for sent in train:
-            if args.drop_out:
+            if drop_out:
                 corrupter.corrupt_sequence(sent, emission, transition)
             vit.decode(sent)
             weight_updater(sent, transition, emission, 0.1, n_labels, feat_map)
