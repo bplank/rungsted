@@ -111,6 +111,7 @@ if not args.initial_model:
 logging.info("Weight vector sizes. Transition={}. Emission={}".format(wt.dims, we.dims))
 
 # Counting group sizes
+drop_out=False
 if args.train and args.drop_out:
     # logging.info("Counting group sizes")
     # group_sizes = count_group_sizes(train)
