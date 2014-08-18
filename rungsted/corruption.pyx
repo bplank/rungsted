@@ -26,10 +26,11 @@ cdef class FastBinomialCorruption(object):
         FeatMap feat_map
         int n_labels
 
-    def __init__(self, drop_pct, FeatMap feat_map, int n_labels):
+    def __init__(self, drop_pct, FeatMap feat_map, int n_labels,int seed):
         self.drop_pct = drop_pct
         self.feat_map = feat_map
         self.n_labels = n_labels
+        srandom(seed)
 
     cpdef corrupt_sequence(self, Sequence sent, WeightVector emission, WeightVector transition):
         cdef:
@@ -61,13 +62,15 @@ cdef class DistributionCorruption(object):
         int current
         double [::1] buffer
 
-    def __init__(self, sample_fn, FeatMap feat_map, int n_labels, int capacity=1000000):
+    def __init__(self, sample_fn, FeatMap feat_map, int n_labels, int capacity=1000000, int seed=1):
         self.sample_fn = sample_fn
         self.capacity = capacity
         self.feat_map = feat_map
         self.n_labels = n_labels
         self.current = -1
         self.buffer = sample_fn(self.capacity)
+        if seed != 1:
+            np.random.seed(seed)
 
     # cdef double _draw(self):
     #     if self.recycle:
@@ -120,10 +123,11 @@ cdef class AdversialCorruption(object):
         FeatMap feat_map
         int n_labels
 
-    def __init__(self, drop_pct, FeatMap feat_map, int n_labels):
+    def __init__(self, drop_pct, FeatMap feat_map, int n_labels,int seed):
         self.drop_pct = drop_pct
         self.feat_map = feat_map
         self.n_labels = n_labels
+        srandom(seed)
 
     cpdef corrupt_sequence(self, Sequence sent, WeightVector emission, WeightVector transition):
         cdef:

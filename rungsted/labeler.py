@@ -49,6 +49,7 @@ parser.add_argument('--name', help="Identify this invocation by NAME (use in con
 parser.add_argument('--labels', help="Read the set of labels from this file.")
 #parser.add_argument('--drop-out', help="Regularize by randomly removing features (with probability 0.1).", action='store_true')
 parser.add_argument('--drop-out', help="Regularize by randomly removing features (with probability 0.1). [adversarial|zipf|binomial]")
+parser.add_argument('--seed', help="seed for random (if not specified generates a seed from current time)",default=1,type=int) 
 #parser.add_argument('--drop-out-method', help="adversarial|zipf|binomial")
 parser.add_argument('--decoder', '-d', help="Use this decoder to find the best sequence given the constraints",
                     choices=('viterbi', 'viterbi_pd'), default='viterbi')
@@ -120,12 +121,18 @@ if args.train and args.drop_out:
         exit()
     else:
         drop_out=True
+
+    seed=args.seed
+    if seed == 1:
+        #generate from time
+        seed=int(time.strftime("%H%M%S"))
+    print >>sys.stderr, "Using seed: {}".format(seed)
     if args.drop_out == "binomial":
-        corrupter = FastBinomialCorruption(0.1, feat_map, n_labels)
+        corrupter = FastBinomialCorruption(0.1, feat_map, n_labels,seed)
     elif args.drop_out == "zipf":
         corrupter = RecycledDistributionCorruption(inverse_zipfian_sampler, feat_map, n_labels)
     elif args.drop_out=="adversarial":
-        corrupter = AdversialCorruption(0.1, feat_map, n_labels)
+        corrupter = AdversialCorruption(0.1, feat_map, n_labels,seed)
     else:
         print "unknown drop-out method"
         exit()

@@ -17,26 +17,26 @@ from libc.stdlib cimport rand
 cdef extern from "limits.h":
     int INT_MAX
 
-def binomial_drop_out(Sequence sent, WeightVector emission, WeightVector transition, FeatMap feat_map, int n_labels, float drop_pct):
-    cdef:
-        Example *example
-        float rand_num
-        int i, j, label
-        int base_feat_i, feat_i
-        int threshold_int = int((1.0 - drop_pct) * float(INT_MAX))
+# def binomial_drop_out(Sequence sent, WeightVector emission, WeightVector transition, FeatMap feat_map, int n_labels, float drop_pct):
+#     cdef:
+#         Example *example
+#         float rand_num
+#         int i, j, label
+#         int base_feat_i, feat_i
+#         int threshold_int = int((1.0 - drop_pct) * float(INT_MAX))
 
-    # Do a sparse drop-out of the emissions features
-    for i in range(sent.examples.size()):
-        example = &sent.examples[i]
-        for j in range(example.features.size()):
-            base_feat_i = (&example.features[j]).index
-            for label in range(n_labels):
-                feat_i = feat_map.feat_i_for_label(base_feat_i, label)
-                emission.active[feat_i] = 0 if rand() > threshold_int else 1
+#     # Do a sparse drop-out of the emissions features
+#     for i in range(sent.examples.size()):
+#         example = &sent.examples[i]
+#         for j in range(example.features.size()):
+#             base_feat_i = (&example.features[j]).index
+#             for label in range(n_labels):
+#                 feat_i = feat_map.feat_i_for_label(base_feat_i, label)
+#                 emission.active[feat_i] = 0 if rand() > threshold_int else 1
 
-    # And a dense drop-out for the transition
-    for i in range(transition.active.shape[0]):
-        transition.active[i] = 0 if rand() > threshold_int else 1
+#     # And a dense drop-out for the transition
+#     for i in range(transition.active.shape[0]):
+#         transition.active[i] = 0 if rand() > threshold_int else 1
 
 
 
