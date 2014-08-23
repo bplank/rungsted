@@ -138,7 +138,8 @@ cdef class AdversialCorruption(object):
             long threshold_int = <long> ((1.0 - self.drop_pct) * RAND_MAX)
             # int inactive = 0, total = 0
 
-        w_cut = abs(emission.mean) + abs(emission.stddev())
+        #w_cut = abs(emission.mean) + abs(emission.stddev())
+        w_cut = emission.mean + emission.stddev()
 
         # if rand() > (0.99 * INT_MAX):
             # print "mean     {}  variance {}".format(emission.mean, emission.variance())
@@ -161,7 +162,8 @@ cdef class AdversialCorruption(object):
                         emission.active[feat_i] = 1
 
         # And a dense drop-out for the transition
-        w_cut = abs(transition.mean) + abs(transition.stddev())
+        #w_cut = abs(transition.mean) + abs(transition.stddev())
+        w_cut = transition.mean + transition.stddev()
 
         for i in range(transition.active.shape[0]):
             # total += 1

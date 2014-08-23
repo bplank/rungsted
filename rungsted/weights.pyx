@@ -77,7 +77,8 @@ cdef class WeightVector:
         self.last_update[feat_i] = self.n_updates
         self.acc[feat_i] += (missed_updates + 1) * self.w[feat_i]
 
-        self._update_running_mean(self.w[feat_i], self.w[feat_i] + val)
+        #self._update_running_mean(self.w[feat_i], self.w[feat_i] + val)
+        self._update_running_mean(abs(self.w[feat_i]), abs(self.w[feat_i]) + val)
         if self.ada_grad:
             self._update_ada_grad(feat_i, val)
 
